@@ -6,7 +6,6 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.xrp.XRPMotor;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -31,11 +30,15 @@ public class Robot extends TimedRobot {
   
      private XboxController joy1 = new XboxController(0);
 
-     private tankDrive tDrive = new tankDrive(leftMotor1, rightMotor1);
+     // The XRP has onboard encoders that are hardcoded
+  // to use DIO pins 4/5 and 6/7 for the left and right
+  private final Encoder m_leftEncoder = new Encoder(4, 5);
+  private final Encoder m_rightEncoder = new Encoder(6, 7);
 
-       
-          private Encoder encoder = new Encoder(0,1,false, EncodingType.k4X);
+      
+     
       private final double kDriveTick2Feet = 1.0 /128*6*Math.PI/12;
+
 
   public Robot() {}
 
@@ -43,7 +46,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    encoder.reset();
+    m_leftEncoder.reset();
+    m_rightEncoder.reset();
 
   
   }
@@ -61,19 +65,23 @@ public class Robot extends TimedRobot {
     }
   
 
-    double sensorPosition = encoder.get() * kDriveTick2Feet;
+    double sensorPosition = m_leftEncoder.get() * kDriveTick2Feet;
+    double sensorPosition2 = m_rightEncoder.get() * kDriveTick2Feet;
 
     double error = setpoint - sensorPosition;
+    double error2 = setpoint - sensorPosition2;
 
     double outputSpeed = kP * error;
+    double outputSpeed2 = kP  *error2;
 
-    leftMotor1.set(outputSpeed);
-    rightMotor1.set(-outputSpeed);
+    leftMotor1.set(-outputSpeed);
+    rightMotor1.set(outputSpeed2);
   }
 
   @Override
   public void robotPeriodic(){
-    SmartDashboard.putNumber("encoder value", encoder.get() *kDriveTick2Feet);
+   SmartDashboard.putNumber("leftEncoder value", m_leftEncoder.get());
+   SmartDashboard.putNumber("rightEncoder value", m_rightEncoder.get());
   }
 
   @Override
@@ -82,12 +90,11 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
 
-    double speed = joy1.getLeftY();
-    leftMotor1.set(speed);
+    double speed = -joy1.getLeftY();
     double speed2 = joy1.getRightY();
-    rightMotor1.set(speed2);
+   
 
-    public void tDrive(double speed, double speed2);
+    dDrive.tankDrive(speed, speed2);
 
   }
   
