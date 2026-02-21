@@ -40,6 +40,9 @@ public class Robot extends TimedRobot {
     private final XRPRangefinder rangeDistance = new XRPRangefinder();
     private final XRPReflectanceSensor reflect = new XRPReflectanceSensor();
 
+    private final XRPReflectanceSensor lReflectanceSensor = new XRPReflectanceSensor();
+    private final XRPReflectanceSensor rReflectanceSensor = new XRPReflectanceSensor();
+
       
      
     private final double kDriveTick2Inch = Math.PI * 2.3622/585;
@@ -104,7 +107,7 @@ public class Robot extends TimedRobot {
     leftMotor.set(leftoutputSpeed);
     rightMotor.set(rightoutputSpeed);
 
-    
+  
   }
 
   @Override
@@ -125,6 +128,8 @@ public class Robot extends TimedRobot {
    SmartDashboard.putNumber("outputSpeed", averageoutputSpeed);
 
    SmartDashboard.putNumber("rangedistance", rangeDistance.getDistanceInches());
+
+   SmartDashboard.putNumber("leftReflectance", lReflectanceSensor());
    
    
   }
@@ -137,9 +142,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-
-  
-   
 
     dDrive.arcadeDrive(-joy.getLeftY(),-joy.getRightX());
 
