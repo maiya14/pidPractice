@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.xrp.XRPRangefinder;
 import edu.wpi.first.wpilibj.xrp.XRPReflectanceSensor;
+import edu.wpi.first.wpilibj.xrp.XRPGyro;
 
 /**
  * The methods in this class are called automatically corresponding to each mode, as described in
@@ -42,6 +43,8 @@ public class Robot extends TimedRobot {
 
     private final XRPReflectanceSensor lReflectanceSensor = new XRPReflectanceSensor();
     private final XRPReflectanceSensor rReflectanceSensor = new XRPReflectanceSensor();
+
+    private final XRPGyro gyroXrp = new XRPGyro();
 
       
      
@@ -127,9 +130,20 @@ public class Robot extends TimedRobot {
    SmartDashboard.putNumber("rightoutputSpeed value", rightoutputSpeed);
    SmartDashboard.putNumber("outputSpeed", averageoutputSpeed);
 
-   SmartDashboard.putNumber("rangedistance", rangeDistance.getDistanceInches());
+   SmartDashboard.putNumber("rangedistance", rangeDistance.getDistanceInches()); 
 
-   SmartDashboard.putNumber("leftReflectance", lReflectanceSensor());
+   SmartDashboard.putNumber("Angle", gyroXrp.getAngle());
+   SmartDashboard.putNumber("AngleX", gyroXrp.getAngleX());
+   SmartDashboard.putNumber("AngleY", gyroXrp.getAngleY());
+   SmartDashboard.putNumber("AngleZ", gyroXrp.getAngleZ());
+
+   SmartDashboard.putNumber("Rate", gyroXrp.getRate());
+   SmartDashboard.putNumber("RateX", gyroXrp.getRateX());
+   SmartDashboard.putNumber("RateY", gyroXrp.getRateY());
+   SmartDashboard.putNumber("RateZ", gyroXrp.getRateZ());
+
+   //SmartDashboard.putNumber("Rotation2d", gyroXrp.getRotation2d());
+
    
    
   }
