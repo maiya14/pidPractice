@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.xrp.XRPMotor;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -41,10 +42,11 @@ public class Robot extends TimedRobot {
     private final XRPRangefinder rangeDistance = new XRPRangefinder();
     private final XRPReflectanceSensor reflect = new XRPReflectanceSensor();
 
-    private final XRPReflectanceSensor lReflectanceSensor = new XRPReflectanceSensor();
-    private final XRPReflectanceSensor rReflectanceSensor = new XRPReflectanceSensor();
+    //private final XRPReflectanceSensor lReflectanceSensor = new XRPReflectanceSensor();
+    //private final XRPReflectanceSensor rReflectanceSensor = new XRPReflectanceSensor();
 
     private final XRPGyro gyroXrp = new XRPGyro();
+    private Rotation2d rotation = new Rotation2d();
 
       
      
@@ -142,7 +144,9 @@ public class Robot extends TimedRobot {
    SmartDashboard.putNumber("RateY", gyroXrp.getRateY());
    SmartDashboard.putNumber("RateZ", gyroXrp.getRateZ());
 
-   //SmartDashboard.putNumber("Rotation2d", gyroXrp.getRotation2d());
+
+   rotation = gyroXrp.getRotation2d();
+   SmartDashboard.putNumber("Rotation2d", rotation.getDegrees());
 
    
    
