@@ -76,12 +76,11 @@ public class Robot extends TimedRobot {
     rightMotor.setInverted(true);
   }
 
-
-
   @Override
   public void autonomousInit() {
     m_leftEncoder.reset();
     m_rightEncoder.reset();
+
 
   
   }
