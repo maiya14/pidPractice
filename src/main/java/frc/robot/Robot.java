@@ -40,13 +40,14 @@ public class Robot extends TimedRobot {
     private final Encoder m_rightEncoder = new Encoder(6, 7);
 
     private final XRPRangefinder rangeDistance = new XRPRangefinder();
-    private final XRPReflectanceSensor reflect = new XRPReflectanceSensor();
 
-    //private final XRPReflectanceSensor lReflectanceSensor = new XRPReflectanceSensor();
-    //private final XRPReflectanceSensor rReflectanceSensor = new XRPReflectanceSensor();
+    private final XRPReflectanceSensor lReflectanceSensor = new XRPReflectanceSensor();
+    private final XRPReflectanceSensor rReflectanceSensor = new XRPReflectanceSensor();
 
     private final XRPGyro gyroXrp = new XRPGyro();
     private Rotation2d rotation = new Rotation2d();
+
+    private double targetHeading;
 
       
      
@@ -81,6 +82,9 @@ public class Robot extends TimedRobot {
     m_leftEncoder.reset();
     m_rightEncoder.reset();
 
+    gyroXrp.reset();
+    targetHeading = 0.0;
+
 
   
   }
@@ -110,6 +114,16 @@ public class Robot extends TimedRobot {
 
     leftMotor.set(leftoutputSpeed);
     rightMotor.set(rightoutputSpeed);
+
+    lReflectanceSensor.getRightReflectanceValue();
+    rReflectanceSensor.getRightReflectanceValue();
+
+    if (joy.getBButton()){
+      
+    } else{
+    leftMotor.set(.25);
+    rightMotor.set(.25);
+    }
 
   
   }
@@ -143,9 +157,11 @@ public class Robot extends TimedRobot {
    SmartDashboard.putNumber("RateY", gyroXrp.getRateY());
    SmartDashboard.putNumber("RateZ", gyroXrp.getRateZ());
 
-
    rotation = gyroXrp.getRotation2d();
    SmartDashboard.putNumber("Rotation2d", rotation.getDegrees());
+
+   SmartDashboard.putNumber("left reflectance sensor", lReflectanceSensor.getLeftReflectanceValue());
+   SmartDashboard.putNumber("right relfectance sensor", rReflectanceSensor.getRightReflectanceValue());
 
    
    
@@ -153,7 +169,10 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     m_leftEncoder.reset();
-    m_rightEncoder.reset(); 
+    m_rightEncoder.reset();
+    
+    gyroXrp.reset();
+    targetHeading = 0.0;
 
   }
 
@@ -161,7 +180,14 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
 
     dDrive.arcadeDrive(-joy.getLeftY(),-joy.getRightX());
+    
 
+    double currentHeading = gyroXrp.getAngle();
+    double error  = targetHeading - currentHeading;
+    double kP = 0.045;
+    double correction = error * kP;
+
+    dDrive.arcadeDrive(0.5, correction);                                                           
   
 
   }
