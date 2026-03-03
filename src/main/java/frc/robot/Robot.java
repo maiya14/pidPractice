@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.xrp.XRPRangefinder;
 import edu.wpi.first.wpilibj.xrp.XRPReflectanceSensor;
 import edu.wpi.first.wpilibj.xrp.XRPGyro;
+import edu.wpi.first.math.controller.PIDController;
 
 /**
  * The methods in this class are called automatically corresponding to each mode, as described in
@@ -47,13 +48,14 @@ public class Robot extends TimedRobot {
     private final XRPGyro gyroXrp = new XRPGyro();
     private Rotation2d rotation = new Rotation2d();
 
+
     private double targetHeading;
 
-      
+    private double kp = 0.045;
+
+    private final PIDController pidController = new PIDController(kp,0,0);
      
     private final double kDriveTick2Inch = Math.PI * 2.3622/585;
-
-    final double kP = 0.045;
 
     private double setpoint = 0;
 
@@ -68,7 +70,7 @@ public class Robot extends TimedRobot {
     private double leftoutputSpeed = 0;
     private double rightoutputSpeed =0;
     private double averageoutputSpeed =0;
-
+ 
 
   
 
@@ -94,36 +96,39 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {
 
       if (joy.getAButton()){
-        setpoint = 36;
+        pidController.setSetpoint(36);
     } else{
-        setpoint = 0;   
+        pidController.setSetpoint(0);  
     }
-  
 
-    leftsensorPosition = m_leftEncoder.get() * kDriveTick2Inch;
+
+    leftsensorPosition = m_leftEncoder.get() *kDriveTick2Inch;
     rightsensorPosition = m_rightEncoder.get() * kDriveTick2Inch;
     averagesensorPosition = (leftsensorPosition + rightsensorPosition)/2; 
+
+  
 
     lefterror = setpoint - leftsensorPosition;
     righterror = setpoint - rightsensorPosition;
     averageerror = (lefterror + righterror)/2;
 
-    leftoutputSpeed = kP * lefterror;
-    rightoutputSpeed = kP  *righterror;
-    averageoutputSpeed = (leftoutputSpeed + rightoutputSpeed)/2;
+    leftoutputSpeed = kp * lefterror;
+    rightoutputSpeed = kp  *righterror;
+    averageoutputSpeed =  pidController.calculate(averagesensorPosition);
 
-    leftMotor.set(leftoutputSpeed);
-    rightMotor.set(rightoutputSpeed);
+    leftMotor.set(averageoutputSpeed);
+    rightMotor.set(averageoutputSpeed);
 
     lReflectanceSensor.getRightReflectanceValue();
     rReflectanceSensor.getRightReflectanceValue();
 
-    if (joy.getBButton()){
-      
-    } else{
-    leftMotor.set(.25);
-    rightMotor.set(.25);
-    }
+   // if (joy.getBButton(), lReflectanceSensor <= 0.5, rReflectanceSensor <= 0.5){
+   // leftMotor.set(0.25);
+    //rightMotor.set(0.25);
+   // } else{
+   // leftMotor.set(0);
+   // rightMotor.set(0);
+    //} }
 
   
   }
